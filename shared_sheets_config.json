@@ -1,0 +1,11 @@
+{
+  "spreadsheet_id_akademik": "13ohWc_DhrKXXogQnK2JWwxQfGYwo0KVV5gu20cfAt68",
+  "spreadsheet_id_keuangan": "17vf-FEBzvboyiESP7QFKvP7dIUwT6XiChCOIQuuOJm0",
+  "webhook_url_akademik": "",
+  "webhook_url_keuangan": "",
+  "auto_sync_interval_mins": 1,
+  "auto_sync_enabled": true,
+  "last_sync_akademik": "Hari ini",
+  "last_sync_keuangan": "Hari ini",
+  "sync_status": "terhubung"
+}

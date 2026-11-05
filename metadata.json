@@ -1,0 +1,6 @@
+{
+  "name": "SIM Sekolah Terintegrasi",
+  "description": "Sistem Informasi Manajemen Sekolah Terintegrasi dengan Google Sheets, multi-role dashboard, SPP otomatis, dan buku tamu digital.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
