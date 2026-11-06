@@ -25,7 +25,8 @@ import {
   Building,
   Activity,
   Receipt,
-  HeartHandshake
+  HeartHandshake,
+  Database
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -60,17 +61,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     case 'admin_sekolah':
       menuItems = [
         { id: 'overview', label: 'Dashboard Utama', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { id: 'siswa', label: 'Database Siswa', icon: <GraduationCap className="w-4 h-4" /> },
-        { id: 'relasi-ortu', label: 'Penghubung Ortu & Siswa', icon: <HeartHandshake className="w-4 h-4" /> },
-        { id: 'guru-staf', label: 'Guru & Tenaga Pendidik', icon: <Users className="w-4 h-4" /> },
-        { id: 'akademik', label: 'Rombel, Mapel & Jadwal', icon: <BookOpen className="w-4 h-4" /> },
-        { id: 'keuangan', label: 'Keuangan & SPP', icon: <DollarSign className="w-4 h-4" /> },
-        { id: 'presensi', label: 'Presensi Terpadu', icon: <CheckSquare className="w-4 h-4" /> },
-        { id: 'nilai', label: 'Sistem Penilaian Rapor', icon: <TrendingUp className="w-4 h-4" /> },
-        { id: 'prestasi', label: 'Prestasi Siswa', icon: <Award className="w-4 h-4" /> },
-        { id: 'buku-tamu', label: 'Buku Tamu Resepsionis', icon: <BookMarked className="w-4 h-4" /> },
-        { id: 'sheets', label: 'Integrasi Google Sheets', icon: <FileSpreadsheet className="w-4 h-4" />, badge: sheetsConfig.sync_status === 'terhubung' ? 'LIVE' : 'SYNC' },
-        { id: 'users', label: 'Pengelolaan Akun (USERS)', icon: <UserCheck className="w-4 h-4" />, badge: 'PASSWORD' },
+        { id: 'master-data', label: 'Input Data Master', icon: <Database className="w-4 h-4 text-emerald-400" />, badge: '5 TAB' },
+        { id: 'akademik', label: 'Menu Akademik', icon: <GraduationCap className="w-4 h-4 text-blue-400" />, badge: 'LENGKAP' },
+        { id: 'keuangan', label: 'Menu Keuangan', icon: <DollarSign className="w-4 h-4 text-emerald-400" />, badge: 'SPP & KAS' },
+        { id: 'piket', label: 'Menu Piket', icon: <CheckSquare className="w-4 h-4 text-amber-400" />, badge: 'HARIAN' },
+        { id: 'sheets', label: 'Integrasi Google Sheets', icon: <FileSpreadsheet className="w-4 h-4 text-emerald-400" />, badge: sheetsConfig.sync_status === 'terhubung' ? 'LIVE' : 'SYNC' },
         { id: 'branding', label: 'Identitas Sekolah & CMS', icon: <Building className="w-4 h-4" /> },
         { id: 'audit-log', label: 'Audit Log & Keamanan', icon: <ShieldAlert className="w-4 h-4" /> },
         { id: 'testing', label: 'Panduan Pengujian SIM', icon: <Activity className="w-4 h-4" /> }
@@ -80,11 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     case 'admin_keuangan':
       menuItems = [
         { id: 'overview', label: 'Dashboard Keuangan', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { id: 'tagihan', label: 'Tagihan SPP Bulanan', icon: <CreditCard className="w-4 h-4" /> },
-        { id: 'pembayaran', label: 'Input Pembayaran & Kasir', icon: <Receipt className="w-4 h-4" /> },
-        { id: 'pengeluaran', label: 'Kas & Belanja Sekolah', icon: <DollarSign className="w-4 h-4" /> },
-        { id: 'jurnal', label: 'Jurnal Umum Double-Entry', icon: <FileText className="w-4 h-4" /> },
-        { id: 'coa', label: 'Bagan Akun (COA)', icon: <BookOpen className="w-4 h-4" /> },
+        { id: 'keuangan', label: 'Menu Keuangan', icon: <DollarSign className="w-4 h-4 text-emerald-400" />, badge: 'SPP & KAS' },
         { id: 'laporan', label: 'Laporan Keuangan & Piutang', icon: <TrendingUp className="w-4 h-4" /> }
       ];
       break;
@@ -92,27 +83,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
     case 'admin_akademik':
       menuItems = [
         { id: 'overview', label: 'Dashboard Akademik', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { id: 'siswa', label: 'Data Induk Siswa', icon: <GraduationCap className="w-4 h-4" /> },
-        { id: 'relasi-ortu', label: 'Penghubung Wali Murid', icon: <HeartHandshake className="w-4 h-4" /> },
-        { id: 'guru', label: 'Data Tenaga Pendidik', icon: <Users className="w-4 h-4" /> },
-        { id: 'kelas', label: 'Kelas & Rombel Belajar', icon: <Building className="w-4 h-4" /> },
-        { id: 'mapel', label: 'Mata Pelajaran & KKM', icon: <BookOpen className="w-4 h-4" /> },
-        { id: 'jadwal', label: 'Jadwal Pembelajaran', icon: <Calendar className="w-4 h-4" /> },
-        { id: 'presensi', label: 'Rekap Presensi Siswa', icon: <CheckSquare className="w-4 h-4" /> },
-        { id: 'nilai', label: 'Verifikasi & Kunci Nilai', icon: <TrendingUp className="w-4 h-4" /> },
-        { id: 'prestasi', label: 'Data Prestasi Siswa', icon: <Award className="w-4 h-4" /> }
+        { id: 'master-data', label: 'Input Data Master', icon: <Database className="w-4 h-4 text-emerald-400" />, badge: '5 TAB' },
+        { id: 'akademik', label: 'Menu Akademik', icon: <GraduationCap className="w-4 h-4 text-blue-400" />, badge: 'KURIKULUM' },
+        { id: 'piket', label: 'Menu Piket', icon: <CheckSquare className="w-4 h-4 text-amber-400" /> }
       ];
       break;
 
     case 'staff_piket':
       menuItems = [
         { id: 'overview', label: 'Dashboard Piket', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { id: 'presensi-siswa', label: 'Presensi Siswa Harian', icon: <CheckSquare className="w-4 h-4" /> },
-        { id: 'presensi-guru', label: 'Presensi Jam Kerja Guru', icon: <Clock className="w-4 h-4" /> },
-        { id: 'keterlambatan', label: 'Pendataan Keterlambatan', icon: <Activity className="w-4 h-4" /> },
-        { id: 'izin-sakit', label: 'Pendataan Izin & Sakit', icon: <FileText className="w-4 h-4" /> },
-        { id: 'buku-tamu', label: 'Buku Tamu Resepsionis', icon: <BookMarked className="w-4 h-4" /> },
-        { id: 'kejadian', label: 'Buku Kejadian Sekolah', icon: <ShieldAlert className="w-4 h-4" /> }
+        { id: 'piket', label: 'Menu Piket', icon: <CheckSquare className="w-4 h-4 text-amber-400" />, badge: 'HARIAN' }
       ];
       break;
 

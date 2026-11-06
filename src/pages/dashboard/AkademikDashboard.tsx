@@ -290,8 +290,18 @@ export const AkademikDashboard: React.FC<AkademikDashboardProps> = ({ initialTab
       {/* TAB: Data Guru */}
       {activeTab === 'guru' && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-slate-900 text-base">Database Tenaga Pendidik / Guru ({filteredGuru.length})</h3>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="font-bold text-slate-900 text-base">Database Tenaga Pendidik / Guru ({filteredGuru.length})</h3>
+              <p className="text-xs text-slate-500">Tersinkron dengan Spreadsheet Akademik (tab: GURU).</p>
+            </div>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('navigate-section', { detail: 'guru-staf' }))}
+              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>Input Data Guru & Staff</span>
+            </button>
           </div>
 
           <div className="overflow-x-auto">

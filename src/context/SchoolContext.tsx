@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
+  User,
   Siswa,
   Guru,
   Staff,
@@ -48,6 +49,7 @@ interface SchoolContextType {
   updateConfig: (cfg: PengaturanSekolah) => void;
   sheetsConfig: GoogleSheetsConfig;
   updateSheetsConfig: (cfg: GoogleSheetsConfig) => void;
+  users: User[];
   siswa: Siswa[];
   guru: Guru[];
   staff: Staff[];
@@ -82,6 +84,9 @@ interface SchoolContextType {
   deleteStaff: (id: string) => void;
   saveOrangTua: (o: OrangTua) => void;
   deleteOrangTua: (id: string) => void;
+  saveUser: (u: User) => void;
+  deleteUser: (id: string) => void;
+  syncAkademikTable: (sheetName: 'USERS' | 'SISWA' | 'GURU' | 'STAFF' | 'ORANG_TUA' | 'RELASI_ORANG_TUA_SISWA') => Promise<{ success: boolean; message: string }>;
   saveRelasiOrtuSiswa: (relasi: RelasiOrtuSiswa) => void;
   deleteRelasiOrtuSiswa: (id: string) => void;
   hubungkanOrtuSiswa: (ortuId: string, siswaId: string, status?: 'terverifikasi' | 'menunggu') => Promise<{ success: boolean; message: string }>;
@@ -138,6 +143,7 @@ const SchoolContext = createContext<SchoolContextType | undefined>(undefined);
 export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [config, setConfig] = useState<PengaturanSekolah>(StorageService.getSchoolConfig());
   const [sheetsConfig, setSheetsConfig] = useState<GoogleSheetsConfig>(StorageService.getSheetsConfig());
+  const [users, setUsers] = useState<User[]>(() => StorageService.getUsers());
   const [siswa, setSiswa] = useState<Siswa[]>(StorageService.getSiswa());
   const [guru, setGuru] = useState<Guru[]>(StorageService.getGuru());
   const [staff, setStaff] = useState<Staff[]>(StorageService.getStaff());
@@ -176,6 +182,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const refreshAllData = useCallback(() => {
     setConfig(StorageService.getSchoolConfig());
     setSheetsConfig(StorageService.getSheetsConfig());
+    setUsers(StorageService.getUsers());
     setSiswa(StorageService.getSiswa());
     setGuru(StorageService.getGuru());
     setStaff(StorageService.getStaff());
@@ -355,40 +362,85 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     addToast('success', 'Interval Diperbarui', `Interval sinkronisasi otomatis disetel ke setiap ${safeMins} menit.`);
   };
 
+  const syncAkademikTable = async (
+    sheetName: 'USERS' | 'SISWA' | 'GURU' | 'STAFF' | 'ORANG_TUA' | 'RELASI_ORANG_TUA_SISWA'
+  ): Promise<{ success: boolean; message: string }> => {
+    if (!sheetsConfig.webhook_url_akademik) {
+      return { success: false, message: 'Webhook URL Akademik belum dikonfigurasi.' };
+    }
+    try {
+      const fullAkademik = GoogleSheetsPopulator.getAkademikData();
+      const rows = fullAkademik[sheetName];
+      if (!rows) return { success: false, message: `Tab ${sheetName} tidak ditemukan.` };
+      await sendWebhookSync(sheetsConfig.webhook_url_akademik, {
+        action: 'sync_table',
+        sheetName,
+        rows
+      });
+      return {
+        success: true,
+        message: `Tab ${sheetName} (${rows.length - 1} data) berhasil disinkronkan ke Google Sheets.`
+      };
+    } catch (err: any) {
+      console.warn(`Sync ${sheetName} error:`, err);
+      return { success: false, message: err?.message || 'Gagal sinkronisasi ke webhook.' };
+    }
+  };
+
+  const saveUser = (u: User) => {
+    StorageService.saveUser(u);
+    setUsers(StorageService.getUsers());
+    addToast('success', 'Data User Disimpan', `Akun ${u.username} (${u.role_id}) berhasil disimpan.`);
+    syncAkademikTable('USERS').catch(() => {});
+  };
+
+  const deleteUser = (id: string) => {
+    StorageService.deleteUser(id);
+    setUsers(StorageService.getUsers());
+    addToast('info', 'User Dihapus', 'Akun pengguna berhasil dihapus.');
+    syncAkademikTable('USERS').catch(() => {});
+  };
+
   const saveSiswa = (s: Siswa) => {
     StorageService.saveSiswa(s);
     setSiswa(StorageService.getSiswa());
     addToast('success', 'Data Siswa Disimpan', `Data siswa ${s.nama_lengkap} berhasil diperbarui.`);
+    syncAkademikTable('SISWA').catch(() => {});
   };
 
   const deleteSiswa = (id: string) => {
     StorageService.deleteSiswa(id);
     setSiswa(StorageService.getSiswa());
     addToast('info', 'Data Dihapus', 'Data siswa berhasil dihapus.');
+    syncAkademikTable('SISWA').catch(() => {});
   };
 
   const saveGuru = (g: Guru) => {
     StorageService.saveGuru(g);
     setGuru(StorageService.getGuru());
     addToast('success', 'Data Guru Disimpan', `Data guru ${g.nama_lengkap} berhasil diperbarui.`);
+    syncAkademikTable('GURU').catch(() => {});
   };
 
   const deleteGuru = (id: string) => {
     StorageService.deleteGuru(id);
     setGuru(StorageService.getGuru());
     addToast('info', 'Data Dihapus', 'Data guru berhasil dihapus.');
+    syncAkademikTable('GURU').catch(() => {});
   };
 
   const saveStaff = (st: Staff) => {
     StorageService.saveStaff(st);
     setStaff(StorageService.getStaff());
     addToast('success', 'Data Staf Disimpan', `Data staf ${st.nama_lengkap} berhasil diperbarui.`);
+    syncAkademikTable('STAFF').catch(() => {});
   };
 
   const deleteStaff = (id: string) => {
     StorageService.deleteStaff(id);
     setStaff(StorageService.getStaff());
     addToast('info', 'Data Dihapus', 'Data staf berhasil dihapus.');
+    syncAkademikTable('STAFF').catch(() => {});
   };
 
   const syncRelasiLive = async () => {
@@ -702,6 +754,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         updateConfig,
         sheetsConfig,
         updateSheetsConfig,
+        users,
         siswa,
         guru,
         staff,
@@ -727,6 +780,9 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         addToast,
         removeToast,
         refreshAllData,
+        saveUser,
+        deleteUser,
+        syncAkademikTable,
         saveSiswa,
         deleteSiswa,
         saveGuru,

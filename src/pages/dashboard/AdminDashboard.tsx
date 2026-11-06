@@ -17,7 +17,8 @@ import {
   ArrowDownRight,
   PlusCircle,
   FileText,
-  Key
+  Key,
+  Database
 } from 'lucide-react';
 import {
   BarChart,
@@ -135,6 +136,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateSectio
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={() => onNavigateSection('master-data')}
+            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer ring-1 ring-blue-400/50"
+          >
+            <Database className="w-3.5 h-3.5 text-blue-200" />
+            <span>Input Data Master (5 Tab)</span>
+          </button>
           <button
             onClick={() => generateMonthlyBills('November 2026', config.tahun_ajaran_aktif)}
             className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-md transition-all flex items-center gap-1.5"

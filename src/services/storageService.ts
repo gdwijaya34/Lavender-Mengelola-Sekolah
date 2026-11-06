@@ -201,6 +201,69 @@ export const StorageService = {
     }
     setItem(STORAGE_KEYS.USERS, list);
   },
+  setAllUsers(users: User[]) {
+    setItem(STORAGE_KEYS.USERS, users);
+  },
+  setAllSiswa(siswa: Siswa[]) {
+    setItem(STORAGE_KEYS.SISWA, siswa);
+  },
+  setAllGuru(guru: Guru[]) {
+    setItem(STORAGE_KEYS.GURU, guru);
+  },
+  setAllStaff(staff: Staff[]) {
+    setItem(STORAGE_KEYS.STAFF, staff);
+  },
+  setAllOrangTua(ortu: OrangTua[]) {
+    setItem(STORAGE_KEYS.ORANG_TUA, ortu);
+  },
+  setAllRelasiOrtuSiswa(relasi: RelasiOrtuSiswa[]) {
+    setItem(STORAGE_KEYS.RELASI_ORTU, relasi);
+  },
+  setAllKelas(kelas: Kelas[]) {
+    setItem(STORAGE_KEYS.KELAS, kelas);
+  },
+  setAllMapel(mapel: MataPelajaran[]) {
+    setItem(STORAGE_KEYS.MAPEL, mapel);
+  },
+  setAllJadwal(jadwal: JadwalPelajaran[]) {
+    setItem(STORAGE_KEYS.JADWAL, jadwal);
+  },
+  setAllPresensiSiswa(presensi: PresensiSiswa[]) {
+    setItem(STORAGE_KEYS.PRESENSI_SISWA, presensi);
+  },
+  setAllPresensiGuru(presensi: PresensiGuru[]) {
+    setItem(STORAGE_KEYS.PRESENSI_GURU, presensi);
+  },
+  setAllNilai(nilai: NilaiSiswa[]) {
+    setItem(STORAGE_KEYS.NILAI, nilai);
+  },
+  setAllPrestasi(prestasi: PrestasiSiswa[]) {
+    setItem(STORAGE_KEYS.PRESTASI, prestasi);
+  },
+  setAllBukuTamu(tamu: BukuTamu[]) {
+    setItem(STORAGE_KEYS.BUKU_TAMU, tamu);
+  },
+  setAllMasterSPP(spp: MasterSPP[]) {
+    setItem(STORAGE_KEYS.MASTER_SPP, spp);
+  },
+  setAllTagihanSPP(tagihan: TagihanSPP[]) {
+    setItem(STORAGE_KEYS.TAGIHAN_SPP, tagihan);
+  },
+  setAllPembayaranSPP(pembayaran: PembayaranSPP[]) {
+    setItem(STORAGE_KEYS.PEMBAYARAN_SPP, pembayaran);
+  },
+  setAllAkunAkuntansi(akun: AkunAkuntansi[]) {
+    setItem(STORAGE_KEYS.AKUN_AKUNTANSI, akun);
+  },
+  setAllJurnalUmum(jurnal: JurnalUmum[]) {
+    setItem(STORAGE_KEYS.JURNAL_UMUM, jurnal);
+  },
+  setAllTransaksiKeuangan(transaksi: TransaksiKeuangan[]) {
+    setItem(STORAGE_KEYS.TRANSAKSI_KEUANGAN, transaksi);
+  },
+  setAllPengumuman(pengumuman: Pengumuman[]) {
+    setItem(STORAGE_KEYS.PENGUMUMAN, pengumuman);
+  },
   deleteUser(userId: string) {
     const list = this.getUsers().filter(u => u.user_id !== userId);
     setItem(STORAGE_KEYS.USERS, list);

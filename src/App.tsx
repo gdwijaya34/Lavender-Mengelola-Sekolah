@@ -31,6 +31,7 @@ import { BrandingSettingsPage } from './pages/dashboard/BrandingSettingsPage';
 import { AuditLogPage } from './pages/dashboard/AuditLogPage';
 import { TestingGuidePage } from './pages/dashboard/TestingGuidePage';
 import { UsersManagementPage } from './pages/dashboard/UsersManagementPage';
+import { MasterDataInputPage } from './pages/dashboard/MasterDataInputPage';
 
 import { UserRole } from './types';
 
@@ -151,48 +152,84 @@ const MainAppContent: React.FC = () => {
     dashboardTitle = 'Dashboard Super Admin';
     switch (currentSection) {
       case 'overview':
+        dashboardTitle = 'Pusat Komando Super Admin';
         DashboardViewComponent = <AdminDashboard onNavigateSection={sec => setCurrentSection(sec)} />;
         break;
+      case 'master-data':
+        dashboardTitle = 'Input Data Master (5 TAB)';
+        DashboardViewComponent = <MasterDataInputPage initialTab="users" />;
+        break;
+      case 'users':
+        dashboardTitle = 'Kelola Akun & Password Login (USERS)';
+        DashboardViewComponent = <MasterDataInputPage initialTab="users" />;
+        break;
       case 'siswa':
+        dashboardTitle = 'Data Siswa Sekolah';
+        DashboardViewComponent = <MasterDataInputPage initialTab="siswa" />;
+        break;
+      case 'guru-staf':
+        dashboardTitle = 'Data Guru & Tenaga Kependidikan';
+        DashboardViewComponent = <MasterDataInputPage initialTab="guru" />;
+        break;
+      case 'akademik':
+        dashboardTitle = 'Menu Akademik Terpadu';
         DashboardViewComponent = <AkademikDashboard initialTab="siswa" />;
         break;
       case 'relasi-ortu':
+        dashboardTitle = 'Penghubung Siswa & Orang Tua';
         DashboardViewComponent = <AkademikDashboard initialTab="relasi_ortu" />;
         break;
-      case 'guru-staf':
-        DashboardViewComponent = <AkademikDashboard initialTab="guru" />;
-        break;
-      case 'akademik':
-        DashboardViewComponent = <AkademikDashboard initialTab="kelas" />;
-        break;
-      case 'keuangan':
-        DashboardViewComponent = <KeuanganDashboard initialTab="overview" />;
-        break;
-      case 'presensi':
-        DashboardViewComponent = <PiketDashboard />;
-        break;
       case 'nilai':
+        dashboardTitle = 'Verifikasi Nilai Rapor';
         DashboardViewComponent = <AkademikDashboard initialTab="nilai" />;
         break;
-      case 'prestasi':
-        DashboardViewComponent = <PrestasiPage />;
+      case 'keuangan':
+        dashboardTitle = 'Menu Keuangan & SPP';
+        DashboardViewComponent = <KeuanganDashboard initialTab="overview" />;
+        break;
+      case 'tagihan':
+        dashboardTitle = 'Tagihan SPP Siswa';
+        DashboardViewComponent = <KeuanganDashboard initialTab="overview" />;
+        break;
+      case 'pembayaran':
+        dashboardTitle = 'Kasir & Pembayaran SPP';
+        DashboardViewComponent = <KeuanganDashboard initialTab="kasir" />;
+        break;
+      case 'piket':
+        dashboardTitle = 'Menu Piket & Presensi Harian';
+        DashboardViewComponent = <PiketDashboard initialTab="presensi" />;
+        break;
+      case 'presensi':
+        dashboardTitle = 'Presensi & Kehadiran Harian';
+        DashboardViewComponent = <PiketDashboard initialTab="presensi" />;
+        break;
+      case 'keterlambatan':
+        dashboardTitle = 'Buku Keterlambatan Siswa';
+        DashboardViewComponent = <PiketDashboard initialTab="keterlambatan" />;
         break;
       case 'buku-tamu':
-        DashboardViewComponent = <BukuTamuPage onNavigateHome={() => setCurrentSection('overview')} />;
+        dashboardTitle = 'Buku Tamu Resepsionis';
+        DashboardViewComponent = <PiketDashboard initialTab="buku-tamu" />;
+        break;
+      case 'prestasi':
+        dashboardTitle = 'Pusat Prestasi Siswa';
+        DashboardViewComponent = <PrestasiPage />;
         break;
       case 'sheets':
+      case 'import-sheets':
+        dashboardTitle = 'Integrasi Google Sheets & Webhook';
         DashboardViewComponent = <SheetsManagerPage />;
         break;
       case 'branding':
+        dashboardTitle = 'Identitas Sekolah & CMS Portal';
         DashboardViewComponent = <BrandingSettingsPage />;
         break;
-      case 'users':
-        DashboardViewComponent = <UsersManagementPage />;
-        break;
       case 'audit-log':
+        dashboardTitle = 'Audit Log & Keamanan Data';
         DashboardViewComponent = <AuditLogPage />;
         break;
       case 'testing':
+        dashboardTitle = 'Panduan & Checklist Uji SIM';
         DashboardViewComponent = <TestingGuidePage />;
         break;
       default:
@@ -200,13 +237,38 @@ const MainAppContent: React.FC = () => {
     }
   } else if (currentRole === 'admin_keuangan') {
     dashboardTitle = 'Dashboard Admin Keuangan';
-    DashboardViewComponent = <KeuanganDashboard initialTab={currentSection === 'overview' ? 'overview' : currentSection} />;
+    if (currentSection === 'overview' || currentSection === 'keuangan') {
+      dashboardTitle = 'Menu Keuangan & SPP';
+      DashboardViewComponent = <KeuanganDashboard initialTab="overview" />;
+    } else if (currentSection === 'laporan') {
+      dashboardTitle = 'Laporan Keuangan & Piutang';
+      DashboardViewComponent = <KeuanganDashboard initialTab="jurnal" />;
+    } else {
+      DashboardViewComponent = <KeuanganDashboard initialTab={currentSection} />;
+    }
   } else if (currentRole === 'admin_akademik') {
     dashboardTitle = 'Dashboard Admin Akademik';
-    DashboardViewComponent = <AkademikDashboard initialTab={currentSection === 'overview' ? 'siswa' : currentSection} />;
+    if (currentSection === 'master-data') {
+      dashboardTitle = 'Input Data Master Siswa & Guru';
+      DashboardViewComponent = <MasterDataInputPage initialTab="siswa" />;
+    } else if (currentSection === 'piket') {
+      dashboardTitle = 'Menu Piket & Presensi';
+      DashboardViewComponent = <PiketDashboard initialTab="presensi" />;
+    } else if (currentSection === 'akademik' || currentSection === 'overview') {
+      dashboardTitle = 'Menu Akademik Terpadu';
+      DashboardViewComponent = <AkademikDashboard initialTab="siswa" />;
+    } else {
+      DashboardViewComponent = <AkademikDashboard initialTab={currentSection} />;
+    }
   } else if (currentRole === 'staff_piket') {
-    dashboardTitle = 'Dashboard Staff Piket & Resepsionis';
-    DashboardViewComponent = <PiketDashboard />;
+    dashboardTitle = 'Menu Piket & Resepsionis';
+    if (currentSection === 'overview' || currentSection === 'piket') {
+      DashboardViewComponent = <PiketDashboard initialTab="presensi" />;
+    } else if (currentSection === 'buku-tamu') {
+      DashboardViewComponent = <PiketDashboard initialTab="buku-tamu" />;
+    } else {
+      DashboardViewComponent = <PiketDashboard initialTab="presensi" />;
+    }
   } else if (currentRole === 'guru') {
     dashboardTitle = 'Dashboard Guru Mata Pelajaran';
     DashboardViewComponent = <GuruDashboard />;

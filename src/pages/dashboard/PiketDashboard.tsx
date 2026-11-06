@@ -16,7 +16,11 @@ import {
   LogOut
 } from 'lucide-react';
 
-export const PiketDashboard: React.FC = () => {
+interface PiketDashboardProps {
+  initialTab?: 'presensi' | 'keterlambatan' | 'buku-tamu' | 'guru' | 'kejadian';
+}
+
+export const PiketDashboard: React.FC<PiketDashboardProps> = ({ initialTab = 'presensi' }) => {
   const {
     siswa,
     guru,
@@ -31,7 +35,7 @@ export const PiketDashboard: React.FC = () => {
     addToast
   } = useSchool();
 
-  const [activeTab, setActiveTab] = useState<'presensi' | 'keterlambatan' | 'buku-tamu' | 'guru' | 'kejadian'>('presensi');
+  const [activeTab, setActiveTab] = useState<'presensi' | 'keterlambatan' | 'buku-tamu' | 'guru' | 'kejadian'>(initialTab);
   const [selectedKelas, setSelectedKelas] = useState(kelas[0]?.kelas_id || 'KLS-11-A');
   const todayStr = '2026-11-04';
 

@@ -4,6 +4,7 @@ import {
   Siswa,
   Guru,
   Staff,
+  OrangTua,
   Kelas,
   MataPelajaran,
   JadwalPelajaran,
@@ -68,6 +69,15 @@ export const SUPPORTED_IMPORT_TABLES: TableImportDefinition[] = [
     description: 'Data staf tata usaha, pustakawan, dan keamanan.',
     primaryKey: 'staff_id',
     expectedHeaders: ['staff_id', 'nama_lengkap', 'jabatan', 'divisi', 'kontak', 'status']
+  },
+  {
+    id: 'ORANG_TUA',
+    name: 'ORANG_TUA (Wali Murid)',
+    category: 'Akademik',
+    spreadsheet: 'AKADEMIK',
+    description: 'Data kontak orang tua/wali murid dan relasi keluarga.',
+    primaryKey: 'ortu_id',
+    expectedHeaders: ['ortu_id', 'nama_lengkap', 'hubungan', 'pekerjaan', 'kontak', 'email', 'alamat']
   },
   {
     id: 'KELAS',
@@ -336,6 +346,27 @@ export const SheetsImportService = {
           } as Guru;
         });
 
+      case 'STAFF':
+        return dataRows.map((r, idx) => ({
+          staff_id: String(getVal(r, ['staff_id', 'id'], `STF-${String(idx + 1).padStart(3, '0')}`)),
+          nama_lengkap: String(getVal(r, ['nama_lengkap', 'nama'], `Staf ${idx + 1}`)),
+          jabatan: String(getVal(r, ['jabatan', 'posisi'], 'Staff Tata Usaha')),
+          divisi: String(getVal(r, ['divisi', 'bagian', 'unit'], 'Tata Usaha')),
+          kontak: String(getVal(r, ['kontak', 'no_hp', 'telepon', 'wa'], '08123456789')),
+          status: String(getVal(r, ['status'], 'aktif')).toLowerCase().includes('non') ? 'nonaktif' : 'aktif'
+        } as Staff));
+
+      case 'ORANG_TUA':
+        return dataRows.map((r, idx) => ({
+          ortu_id: String(getVal(r, ['ortu_id', 'id'], `ORT-${String(idx + 1).padStart(3, '0')}`)),
+          nama_lengkap: String(getVal(r, ['nama_lengkap', 'nama', 'wali'], `Orang Tua ${idx + 1}`)),
+          hubungan: String(getVal(r, ['hubungan', 'relasi'], 'Ayah')) as any,
+          pekerjaan: String(getVal(r, ['pekerjaan', 'profesi'], 'Wiraswasta')),
+          kontak: String(getVal(r, ['kontak', 'no_hp', 'telepon', 'wa'], '08123456789')),
+          email: String(getVal(r, ['email', 'surel'], `ortu${idx + 1}@wali.sekolah.id`)),
+          alamat: String(getVal(r, ['alamat', 'domisili'], 'Jl. Pendidikan No. 1'))
+        } as OrangTua));
+
       case 'KELAS':
         return dataRows.map((r, idx) => ({
           kelas_id: String(getVal(r, ['kelas_id', 'id'], `KLS-${idx + 1}`)),
@@ -541,6 +572,7 @@ export const SheetsImportService = {
       case 'SISWA': StorageService.setAllSiswa(finalRecords); break;
       case 'GURU': StorageService.setAllGuru(finalRecords); break;
       case 'STAFF': StorageService.setAllStaff(finalRecords); break;
+      case 'ORANG_TUA': StorageService.setAllOrangTua(finalRecords); break;
       case 'KELAS': StorageService.setAllKelas(finalRecords); break;
       case 'MATA_PELAJARAN': StorageService.setAllMapel(finalRecords); break;
       case 'JADWAL_PELAJARAN': StorageService.setAllJadwal(finalRecords); break;
