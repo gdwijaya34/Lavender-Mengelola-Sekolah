@@ -30,11 +30,7 @@ import {
   Power
 } from 'lucide-react';
 
-interface SheetsManagerPageProps {
-  onNavigateSection?: (section: string) => void;
-}
-
-export const SheetsManagerPage: React.FC<SheetsManagerPageProps> = ({ onNavigateSection }) => {
+export const SheetsManagerPage: React.FC = () => {
   const {
     sheetsConfig,
     updateSheetsConfig,
@@ -504,21 +500,6 @@ export const SheetsManagerPage: React.FC<SheetsManagerPageProps> = ({ onNavigate
                 <span>Webhook Akademik Belum Dipasang</span>
               </span>
             )}
-
-            <button
-              type="button"
-              onClick={() => {
-                if (onNavigateSection) {
-                  onNavigateSection('import-sheets');
-                } else {
-                  window.dispatchEvent(new CustomEvent('navigate-section', { detail: 'import-sheets' }));
-                }
-              }}
-              className="px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span>Buka Menu Import Database</span>
-            </button>
           </div>
         </div>
 

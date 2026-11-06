@@ -98,65 +98,6 @@ async function startServer() {
     }
   });
 
-  // API Route: Import data from Google Sheet (via Webhook or Google Sheets export API)
-  app.post('/api/sheets-import', async (req, res) => {
-    const { source, type, spreadsheetId, sheetName } = req.body;
-    const config = readConfig();
-
-    // 1. Fetch via configured Webhook (Fastest & full table structure)
-    if (source === 'webhook' || (!source && type)) {
-      const webhookUrl = type === 'akademik' ? config.webhook_url_akademik : config.webhook_url_keuangan;
-      if (!webhookUrl) {
-        return res.status(400).json({
-          success: false,
-          message: `Webhook ${type} belum dipasang. Harap pasang URL Webhook terlebih dahulu di menu Integrasi Google Sheets, atau gunakan opsi URL Google Sheet Publik.`
-        });
-      }
-
-      try {
-        const response = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'export_all' }),
-          redirect: 'follow'
-        });
-
-        const text = await response.text();
-        const data = JSON.parse(text);
-        if (data.tables) {
-          return res.json({
-            success: true,
-            tables: data.tables,
-            spreadsheetName: data.spreadsheetName || (type === 'akademik' ? 'Database Akademik' : 'Database Keuangan')
-          });
-        }
-        return res.status(400).json({ success: false, message: data.message || 'Webhook tidak mengembalikan data tabel.' });
-      } catch (err: any) {
-        return res.status(500).json({ success: false, message: err.message || 'Gagal mengambil data dari Webhook.' });
-      }
-    }
-
-    // 2. Fetch directly via Google Sheets CSV / Viz API
-    if (spreadsheetId && sheetName) {
-      try {
-        const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-        const response = await fetch(url);
-        if (!response.ok) {
-          return res.status(400).json({
-            success: false,
-            message: `Gagal mengakses tab ${sheetName}. Pastikan spreadsheet dapat diakses dengan link (Anyone with the link).`
-          });
-        }
-        const csvText = await response.text();
-        return res.json({ success: true, csv: csvText, sheetName });
-      } catch (err: any) {
-        return res.status(500).json({ success: false, message: err.message || 'Gagal mengunduh CSV dari Google Sheet.' });
-      }
-    }
-
-    res.status(400).json({ success: false, message: 'Parameter permintaan import tidak valid.' });
-  });
-
   // Background 24/7 Auto-Sync Heartbeat (Runs every 60s in Google Cloud environment)
   setInterval(async () => {
     const config = readConfig();

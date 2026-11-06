@@ -24,8 +24,7 @@ import {
   UserCheck,
   Building,
   Activity,
-  Receipt,
-  Download
+  Receipt
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -68,7 +67,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { id: 'nilai', label: 'Sistem Penilaian Rapor', icon: <TrendingUp className="w-4 h-4" /> },
         { id: 'prestasi', label: 'Prestasi Siswa', icon: <Award className="w-4 h-4" /> },
         { id: 'buku-tamu', label: 'Buku Tamu Resepsionis', icon: <BookMarked className="w-4 h-4" /> },
-        { id: 'import-sheets', label: 'Import dari Google Sheet', icon: <Download className="w-4 h-4 text-emerald-400" />, badge: 'IMPORT' },
         { id: 'sheets', label: 'Integrasi Google Sheets', icon: <FileSpreadsheet className="w-4 h-4" />, badge: sheetsConfig.sync_status === 'terhubung' ? 'LIVE' : 'SYNC' },
         { id: 'users', label: 'Pengelolaan Akun (USERS)', icon: <UserCheck className="w-4 h-4" />, badge: 'PASSWORD' },
         { id: 'branding', label: 'Identitas Sekolah & CMS', icon: <Building className="w-4 h-4" /> },
@@ -85,8 +83,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { id: 'pengeluaran', label: 'Kas & Belanja Sekolah', icon: <DollarSign className="w-4 h-4" /> },
         { id: 'jurnal', label: 'Jurnal Umum Double-Entry', icon: <FileText className="w-4 h-4" /> },
         { id: 'coa', label: 'Bagan Akun (COA)', icon: <BookOpen className="w-4 h-4" /> },
-        { id: 'laporan', label: 'Laporan Keuangan & Piutang', icon: <TrendingUp className="w-4 h-4" /> },
-        { id: 'import-sheets', label: 'Import Data Sheet', icon: <Download className="w-4 h-4 text-emerald-400" /> }
+        { id: 'laporan', label: 'Laporan Keuangan & Piutang', icon: <TrendingUp className="w-4 h-4" /> }
       ];
       break;
 
@@ -100,8 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { id: 'jadwal', label: 'Jadwal Pembelajaran', icon: <Calendar className="w-4 h-4" /> },
         { id: 'presensi', label: 'Rekap Presensi Siswa', icon: <CheckSquare className="w-4 h-4" /> },
         { id: 'nilai', label: 'Verifikasi & Kunci Nilai', icon: <TrendingUp className="w-4 h-4" /> },
-        { id: 'prestasi', label: 'Data Prestasi Siswa', icon: <Award className="w-4 h-4" /> },
-        { id: 'import-sheets', label: 'Import Data Sheet', icon: <Download className="w-4 h-4 text-emerald-400" /> }
+        { id: 'prestasi', label: 'Data Prestasi Siswa', icon: <Award className="w-4 h-4" /> }
       ];
       break;
 
@@ -113,8 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { id: 'keterlambatan', label: 'Pendataan Keterlambatan', icon: <Activity className="w-4 h-4" /> },
         { id: 'izin-sakit', label: 'Pendataan Izin & Sakit', icon: <FileText className="w-4 h-4" /> },
         { id: 'buku-tamu', label: 'Buku Tamu Resepsionis', icon: <BookMarked className="w-4 h-4" /> },
-        { id: 'kejadian', label: 'Buku Kejadian Sekolah', icon: <ShieldAlert className="w-4 h-4" /> },
-        { id: 'import-sheets', label: 'Import dari Google Sheet', icon: <Download className="w-4 h-4 text-emerald-400" /> }
+        { id: 'kejadian', label: 'Buku Kejadian Sekolah', icon: <ShieldAlert className="w-4 h-4" /> }
       ];
       break;
 

@@ -27,7 +27,6 @@ import { GuruDashboard } from './pages/dashboard/GuruDashboard';
 import { SiswaDashboard } from './pages/dashboard/SiswaDashboard';
 import { OrangTuaDashboard } from './pages/dashboard/OrangTuaDashboard';
 import { SheetsManagerPage } from './pages/dashboard/SheetsManagerPage';
-import { ImportSheetsPage } from './pages/dashboard/ImportSheetsPage';
 import { BrandingSettingsPage } from './pages/dashboard/BrandingSettingsPage';
 import { AuditLogPage } from './pages/dashboard/AuditLogPage';
 import { TestingGuidePage } from './pages/dashboard/TestingGuidePage';
@@ -148,10 +147,7 @@ const MainAppContent: React.FC = () => {
   let dashboardTitle = 'Dashboard Sistem Informasi Sekolah';
   let DashboardViewComponent = <AdminDashboard onNavigateSection={sec => setCurrentSection(sec)} />;
 
-  if (currentSection === 'import-sheets') {
-    dashboardTitle = 'Import Database Google Sheets';
-    DashboardViewComponent = <ImportSheetsPage onNavigateSection={sec => setCurrentSection(sec)} />;
-  } else if (currentRole === 'admin_sekolah') {
+  if (currentRole === 'admin_sekolah') {
     dashboardTitle = 'Dashboard Super Admin';
     switch (currentSection) {
       case 'overview':
@@ -181,11 +177,8 @@ const MainAppContent: React.FC = () => {
       case 'buku-tamu':
         DashboardViewComponent = <BukuTamuPage onNavigateHome={() => setCurrentSection('overview')} />;
         break;
-      case 'import-sheets':
-        DashboardViewComponent = <ImportSheetsPage onNavigateSection={sec => setCurrentSection(sec)} />;
-        break;
       case 'sheets':
-        DashboardViewComponent = <SheetsManagerPage onNavigateSection={sec => setCurrentSection(sec)} />;
+        DashboardViewComponent = <SheetsManagerPage />;
         break;
       case 'branding':
         DashboardViewComponent = <BrandingSettingsPage />;
@@ -204,14 +197,10 @@ const MainAppContent: React.FC = () => {
     }
   } else if (currentRole === 'admin_keuangan') {
     dashboardTitle = 'Dashboard Admin Keuangan';
-    DashboardViewComponent = currentSection === 'import-sheets'
-      ? <ImportSheetsPage onNavigateSection={sec => setCurrentSection(sec)} />
-      : <KeuanganDashboard initialTab={currentSection === 'overview' ? 'overview' : currentSection} />;
+    DashboardViewComponent = <KeuanganDashboard initialTab={currentSection === 'overview' ? 'overview' : currentSection} />;
   } else if (currentRole === 'admin_akademik') {
     dashboardTitle = 'Dashboard Admin Akademik';
-    DashboardViewComponent = currentSection === 'import-sheets'
-      ? <ImportSheetsPage onNavigateSection={sec => setCurrentSection(sec)} />
-      : <AkademikDashboard initialTab={currentSection === 'overview' ? 'siswa' : currentSection} />;
+    DashboardViewComponent = <AkademikDashboard initialTab={currentSection === 'overview' ? 'siswa' : currentSection} />;
   } else if (currentRole === 'staff_piket') {
     dashboardTitle = 'Dashboard Staff Piket & Resepsionis';
     DashboardViewComponent = <PiketDashboard />;
