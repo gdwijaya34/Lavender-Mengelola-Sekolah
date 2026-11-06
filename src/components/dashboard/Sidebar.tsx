@@ -113,7 +113,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { id: 'keterlambatan', label: 'Pendataan Keterlambatan', icon: <Activity className="w-4 h-4" /> },
         { id: 'izin-sakit', label: 'Pendataan Izin & Sakit', icon: <FileText className="w-4 h-4" /> },
         { id: 'buku-tamu', label: 'Buku Tamu Resepsionis', icon: <BookMarked className="w-4 h-4" /> },
-        { id: 'kejadian', label: 'Buku Kejadian Sekolah', icon: <ShieldAlert className="w-4 h-4" /> }
+        { id: 'kejadian', label: 'Buku Kejadian Sekolah', icon: <ShieldAlert className="w-4 h-4" /> },
+        { id: 'import-sheets', label: 'Import dari Google Sheet', icon: <Download className="w-4 h-4 text-emerald-400" /> }
       ];
       break;
 

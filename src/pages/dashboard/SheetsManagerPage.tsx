@@ -30,7 +30,11 @@ import {
   Power
 } from 'lucide-react';
 
-export const SheetsManagerPage: React.FC = () => {
+interface SheetsManagerPageProps {
+  onNavigateSection?: (section: string) => void;
+}
+
+export const SheetsManagerPage: React.FC<SheetsManagerPageProps> = ({ onNavigateSection }) => {
   const {
     sheetsConfig,
     updateSheetsConfig,
@@ -503,7 +507,13 @@ export const SheetsManagerPage: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => window.dispatchEvent(new CustomEvent('navigate-section', { detail: 'import-sheets' }))}
+              onClick={() => {
+                if (onNavigateSection) {
+                  onNavigateSection('import-sheets');
+                } else {
+                  window.dispatchEvent(new CustomEvent('navigate-section', { detail: 'import-sheets' }));
+                }
+              }}
               className="px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Download className="w-4 h-4" />

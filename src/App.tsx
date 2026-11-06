@@ -185,7 +185,7 @@ const MainAppContent: React.FC = () => {
         DashboardViewComponent = <ImportSheetsPage onNavigateSection={sec => setCurrentSection(sec)} />;
         break;
       case 'sheets':
-        DashboardViewComponent = <SheetsManagerPage />;
+        DashboardViewComponent = <SheetsManagerPage onNavigateSection={sec => setCurrentSection(sec)} />;
         break;
       case 'branding':
         DashboardViewComponent = <BrandingSettingsPage />;

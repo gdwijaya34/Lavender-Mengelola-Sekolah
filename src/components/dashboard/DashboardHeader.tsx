@@ -9,7 +9,8 @@ import {
   Bell,
   CheckCircle2,
   Calendar,
-  Sparkles
+  Sparkles,
+  Download
 } from 'lucide-react';
 
 interface DashboardHeaderProps {
@@ -66,6 +67,22 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       <div className="flex items-center gap-3">
         {/* Quick Role Switcher for seamless demonstration & evaluation */}
         <QuickRoleSwitcher onNavigate={onNavigatePath} />
+
+        {/* Direct Import Google Sheet Button */}
+        <button
+          onClick={() => {
+            if (onNavigateSection) {
+              onNavigateSection('import-sheets');
+            } else {
+              window.dispatchEvent(new CustomEvent('navigate-section', { detail: 'import-sheets' }));
+            }
+          }}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-teal-50 text-teal-800 hover:bg-teal-100 border border-teal-200 shadow-xs transition-all cursor-pointer"
+          title="Buka menu Import Database dari Google Sheet"
+        >
+          <Download className="w-3.5 h-3.5 text-teal-600" />
+          <span className="font-semibold">Import Sheet</span>
+        </button>
 
         {/* Live 1-Minute Auto-Sync Status & Action Button (Visible across all roles) */}
         <button
