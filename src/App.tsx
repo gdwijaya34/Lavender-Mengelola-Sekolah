@@ -156,6 +156,9 @@ const MainAppContent: React.FC = () => {
       case 'siswa':
         DashboardViewComponent = <AkademikDashboard initialTab="siswa" />;
         break;
+      case 'relasi-ortu':
+        DashboardViewComponent = <AkademikDashboard initialTab="relasi_ortu" />;
+        break;
       case 'guru-staf':
         DashboardViewComponent = <AkademikDashboard initialTab="guru" />;
         break;

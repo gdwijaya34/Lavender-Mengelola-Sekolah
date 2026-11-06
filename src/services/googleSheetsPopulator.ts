@@ -33,6 +33,8 @@ export const GoogleSheetsPopulator = {
     const prestasi = StorageService.getPrestasi();
     const bukuTamu = StorageService.getBukuTamu();
     const pengumuman = StorageService.getPengumuman();
+    const orangTua = StorageService.getOrangTua();
+    const relasiOrtu = StorageService.getRelasiOrtuSiswa();
     const config = StorageService.getSchoolConfig();
     const logs = StorageService.getAuditLogs().filter(l => l.modul !== 'Keuangan');
 
@@ -64,12 +66,30 @@ export const GoogleSheetsPopulator = {
         ...staff.map(st => [st.staff_id, st.nama_lengkap, st.jabatan, st.divisi, st.kontak, st.status])
       ],
       ORANG_TUA: [
-        ['ortu_id', 'nama_lengkap', 'hubungan', 'pekerjaan', 'kontak', 'email', 'alamat'],
-        ...INITIAL_ORANG_TUA.map(o => [o.ortu_id, o.nama_lengkap, o.hubungan, o.pekerjaan, o.kontak, o.email, o.alamat])
+        ['ortu_id', 'nama_lengkap', 'hubungan', 'pekerjaan', 'kontak', 'email', 'alamat', 'jumlah_anak_terhubung'],
+        ...orangTua.map(o => {
+          const count = relasiOrtu.filter(r => r.ortu_id === o.ortu_id).length;
+          return [o.ortu_id, o.nama_lengkap, o.hubungan, o.pekerjaan, o.kontak, o.email, o.alamat, count];
+        })
       ],
       RELASI_ORANG_TUA_SISWA: [
-        ['id', 'ortu_id', 'siswa_id', 'status_verifikasi'],
-        ...INITIAL_RELASI_ORTU.map(r => [r.id, r.ortu_id, r.siswa_id, r.status_verifikasi])
+        ['id', 'ortu_id', 'nama_orang_tua', 'siswa_id', 'nama_siswa', 'nisn', 'kelas', 'hubungan', 'status_verifikasi', 'sinkron_terakhir'],
+        ...relasiOrtu.map(r => {
+          const ortu = orangTua.find(o => o.ortu_id === r.ortu_id);
+          const s = siswa.find(item => item.siswa_id === r.siswa_id);
+          return [
+            r.id,
+            r.ortu_id,
+            ortu?.nama_lengkap || r.ortu_id,
+            r.siswa_id,
+            s?.nama_lengkap || r.siswa_id,
+            s?.nisn || '',
+            s?.kelas_id || '',
+            ortu?.hubungan || 'Wali',
+            r.status_verifikasi,
+            new Date().toISOString()
+          ];
+        })
       ],
       KELAS: [
         ['kelas_id', 'nama_kelas', 'tingkat', 'jurusan', 'wali_kelas_id', 'wali_kelas_nama', 'kapasitas', 'tahun_ajaran'],

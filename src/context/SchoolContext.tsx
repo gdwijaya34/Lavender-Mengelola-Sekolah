@@ -3,6 +3,8 @@ import {
   Siswa,
   Guru,
   Staff,
+  OrangTua,
+  RelasiOrtuSiswa,
   Kelas,
   MataPelajaran,
   JadwalPelajaran,
@@ -24,12 +26,14 @@ import {
 } from '../types';
 import { StorageService } from '../services/storageService';
 import { GoogleSheetsService } from '../services/googleSheetsService';
+import { GoogleSheetsPopulator } from '../services/googleSheetsPopulator';
 import {
   getCachedGoogleToken,
   getCachedGoogleUser,
   subscribeGoogleAuth,
   signInWithGoogle,
-  signOutGoogle
+  signOutGoogle,
+  sendWebhookSync
 } from '../services/googleAuthService';
 
 export interface ToastMessage {
@@ -47,6 +51,8 @@ interface SchoolContextType {
   siswa: Siswa[];
   guru: Guru[];
   staff: Staff[];
+  orangTua: OrangTua[];
+  relasiOrtuSiswa: RelasiOrtuSiswa[];
   kelas: Kelas[];
   mapel: MataPelajaran[];
   jadwal: JadwalPelajaran[];
@@ -73,6 +79,17 @@ interface SchoolContextType {
   saveGuru: (g: Guru) => void;
   deleteGuru: (id: string) => void;
   saveStaff: (st: Staff) => void;
+  deleteStaff: (id: string) => void;
+  saveOrangTua: (o: OrangTua) => void;
+  deleteOrangTua: (id: string) => void;
+  saveRelasiOrtuSiswa: (relasi: RelasiOrtuSiswa) => void;
+  deleteRelasiOrtuSiswa: (id: string) => void;
+  hubungkanOrtuSiswa: (ortuId: string, siswaId: string, status?: 'terverifikasi' | 'menunggu') => Promise<{ success: boolean; message: string }>;
+  putuskanOrtuSiswa: (relasiId: string) => Promise<{ success: boolean; message: string }>;
+  klaimAnakDenganNisn: (ortuId: string, nisn: string, tanggalLahir: string) => Promise<{ success: boolean; message: string; siswa?: Siswa }>;
+  getSiswaByOrtuId: (ortuId: string) => Siswa[];
+  getOrtuBySiswaId: (siswaId: string) => OrangTua[];
+  syncRelasiLive: () => Promise<void>;
   saveKelas: (k: Kelas) => void;
   saveMapel: (m: MataPelajaran) => void;
   saveJadwal: (j: JadwalPelajaran) => void;
@@ -124,6 +141,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [siswa, setSiswa] = useState<Siswa[]>(StorageService.getSiswa());
   const [guru, setGuru] = useState<Guru[]>(StorageService.getGuru());
   const [staff, setStaff] = useState<Staff[]>(StorageService.getStaff());
+  const [orangTua, setOrangTua] = useState<OrangTua[]>(() => StorageService.getOrangTua());
+  const [relasiOrtuSiswa, setRelasiOrtuSiswa] = useState<RelasiOrtuSiswa[]>(() => StorageService.getRelasiOrtuSiswa());
   const [kelas, setKelas] = useState<Kelas[]>(StorageService.getKelas());
   const [mapel, setMapel] = useState<MataPelajaran[]>(StorageService.getMapel());
   const [jadwal, setJadwal] = useState<JadwalPelajaran[]>(StorageService.getJadwal());
@@ -160,6 +179,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSiswa(StorageService.getSiswa());
     setGuru(StorageService.getGuru());
     setStaff(StorageService.getStaff());
+    setOrangTua(StorageService.getOrangTua());
+    setRelasiOrtuSiswa(StorageService.getRelasiOrtuSiswa());
     setKelas(StorageService.getKelas());
     setMapel(StorageService.getMapel());
     setJadwal(StorageService.getJadwal());
@@ -364,6 +385,139 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     addToast('success', 'Data Staf Disimpan', `Data staf ${st.nama_lengkap} berhasil diperbarui.`);
   };
 
+  const deleteStaff = (id: string) => {
+    StorageService.deleteStaff(id);
+    setStaff(StorageService.getStaff());
+    addToast('info', 'Data Dihapus', 'Data staf berhasil dihapus.');
+  };
+
+  const syncRelasiLive = async () => {
+    if (sheetsConfig.webhook_url_akademik) {
+      try {
+        const fullAkademik = GoogleSheetsPopulator.getAkademikData();
+        await sendWebhookSync(sheetsConfig.webhook_url_akademik, {
+          action: 'sync_table',
+          sheetName: 'RELASI_ORANG_TUA_SISWA',
+          rows: fullAkademik.RELASI_ORANG_TUA_SISWA
+        });
+        await sendWebhookSync(sheetsConfig.webhook_url_akademik, {
+          action: 'sync_table',
+          sheetName: 'ORANG_TUA',
+          rows: fullAkademik.ORANG_TUA
+        });
+      } catch (err) {
+        console.warn('Real-time sync relasi notice:', err);
+      }
+    }
+  };
+
+  const saveOrangTua = (o: OrangTua) => {
+    StorageService.saveOrangTua(o);
+    setOrangTua(StorageService.getOrangTua());
+    addToast('success', 'Wali Murid Tersimpan', `Data wali ${o.nama_lengkap} berhasil disimpan.`);
+    syncRelasiLive();
+  };
+
+  const deleteOrangTua = (id: string) => {
+    StorageService.deleteOrangTua(id);
+    setOrangTua(StorageService.getOrangTua());
+    setRelasiOrtuSiswa(StorageService.getRelasiOrtuSiswa());
+    addToast('info', 'Wali Dihapus', 'Data wali murid dan seluruh tautan siswa telah dihapus.');
+    syncRelasiLive();
+  };
+
+  const saveRelasiOrtuSiswa = (relasi: RelasiOrtuSiswa) => {
+    StorageService.saveRelasiOrtuSiswa(relasi);
+    setRelasiOrtuSiswa(StorageService.getRelasiOrtuSiswa());
+    syncRelasiLive();
+  };
+
+  const deleteRelasiOrtuSiswa = (id: string) => {
+    StorageService.deleteRelasiOrtuSiswa(id);
+    setRelasiOrtuSiswa(StorageService.getRelasiOrtuSiswa());
+    addToast('info', 'Tautan Terputus', 'Penghubung orang tua dan siswa telah dinonaktifkan.');
+    syncRelasiLive();
+  };
+
+  const hubungkanOrtuSiswa = async (ortuId: string, siswaId: string, status: 'terverifikasi' | 'menunggu' = 'terverifikasi') => {
+    const existing = relasiOrtuSiswa.find(r => r.ortu_id === ortuId && r.siswa_id === siswaId);
+    if (existing) {
+      if (existing.status_verifikasi !== status) {
+        const updated = { ...existing, status_verifikasi: status };
+        StorageService.saveRelasiOrtuSiswa(updated);
+        setRelasiOrtuSiswa(StorageService.getRelasiOrtuSiswa());
+        addToast('success', 'Status Diperbarui', 'Status verifikasi penghubung siswa berhasil diperbarui.');
+        await syncRelasiLive();
+        return { success: true, message: 'Status relasi diperbarui.' };
+      }
+      return { success: false, message: 'Siswa ini sudah terhubung dengan orang tua terkait.' };
+    }
+
+    const newRelasi: RelasiOrtuSiswa = {
+      id: `REL-${Date.now().toString().slice(-4)}`,
+      ortu_id: ortuId,
+      siswa_id: siswaId,
+      status_verifikasi: status
+    };
+
+    StorageService.saveRelasiOrtuSiswa(newRelasi);
+    setRelasiOrtuSiswa(StorageService.getRelasiOrtuSiswa());
+
+    const ortu = orangTua.find(o => o.ortu_id === ortuId);
+    const s = siswa.find(item => item.siswa_id === siswaId);
+
+    // Sync student's parent info
+    if (s && ortu) {
+      const updatedSiswa = {
+        ...s,
+        nama_ortu: ortu.nama_lengkap,
+        kontak_ortu: ortu.kontak
+      };
+      StorageService.saveSiswa(updatedSiswa);
+      setSiswa(StorageService.getSiswa());
+    }
+
+    addToast('success', 'Berhasil Dihubungkan!', `${s?.nama_lengkap || 'Siswa'} berhasil ditautkan dengan ${ortu?.nama_lengkap || 'Orang Tua'}.`);
+    await syncRelasiLive();
+    return { success: true, message: 'Penghubung orang tua dan siswa berhasil dibuat.' };
+  };
+
+  const putuskanOrtuSiswa = async (relasiId: string) => {
+    StorageService.deleteRelasiOrtuSiswa(relasiId);
+    setRelasiOrtuSiswa(StorageService.getRelasiOrtuSiswa());
+    addToast('info', 'Tautan Dihapus', 'Penghubung orang tua dan siswa telah dihapus.');
+    await syncRelasiLive();
+    return { success: true, message: 'Tautan relasi dihapus.' };
+  };
+
+  const klaimAnakDenganNisn = async (ortuId: string, nisn: string, tanggalLahir: string) => {
+    const cleanNisn = nisn.trim();
+    const cleanTgl = tanggalLahir.trim();
+    const targetSiswa = siswa.find(s => s.nisn === cleanNisn && s.tanggal_lahir === cleanTgl);
+
+    if (!targetSiswa) {
+      addToast('error', 'Verifikasi Gagal', 'Data siswa dengan kombinasi NISN dan Tanggal Lahir tersebut tidak ditemukan di arsip sekolah.');
+      return { success: false, message: 'NISN atau Tanggal Lahir tidak cocok dengan arsip sekolah.' };
+    }
+
+    const res = await hubungkanOrtuSiswa(ortuId, targetSiswa.siswa_id, 'terverifikasi');
+    return { ...res, siswa: targetSiswa };
+  };
+
+  const getSiswaByOrtuId = (ortuId: string): Siswa[] => {
+    const verifiedIds = relasiOrtuSiswa
+      .filter(r => r.ortu_id === ortuId)
+      .map(r => r.siswa_id);
+    return siswa.filter(s => verifiedIds.includes(s.siswa_id));
+  };
+
+  const getOrtuBySiswaId = (siswaId: string): OrangTua[] => {
+    const ortuIds = relasiOrtuSiswa
+      .filter(r => r.siswa_id === siswaId)
+      .map(r => r.ortu_id);
+    return orangTua.filter(o => ortuIds.includes(o.ortu_id));
+  };
+
   const saveKelas = (k: Kelas) => {
     StorageService.saveKelas(k);
     setKelas(StorageService.getKelas());
@@ -551,6 +705,8 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         siswa,
         guru,
         staff,
+        orangTua,
+        relasiOrtuSiswa,
         kelas,
         mapel,
         jadwal,
@@ -576,6 +732,17 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         saveGuru,
         deleteGuru,
         saveStaff,
+        deleteStaff,
+        saveOrangTua,
+        deleteOrangTua,
+        saveRelasiOrtuSiswa,
+        deleteRelasiOrtuSiswa,
+        hubungkanOrtuSiswa,
+        putuskanOrtuSiswa,
+        klaimAnakDenganNisn,
+        getSiswaByOrtuId,
+        getOrtuBySiswaId,
+        syncRelasiLive,
         saveKelas,
         saveMapel,
         saveJadwal,

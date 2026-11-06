@@ -24,7 +24,8 @@ import {
   UserCheck,
   Building,
   Activity,
-  Receipt
+  Receipt,
+  HeartHandshake
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -60,6 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       menuItems = [
         { id: 'overview', label: 'Dashboard Utama', icon: <LayoutDashboard className="w-4 h-4" /> },
         { id: 'siswa', label: 'Database Siswa', icon: <GraduationCap className="w-4 h-4" /> },
+        { id: 'relasi-ortu', label: 'Penghubung Ortu & Siswa', icon: <HeartHandshake className="w-4 h-4" /> },
         { id: 'guru-staf', label: 'Guru & Tenaga Pendidik', icon: <Users className="w-4 h-4" /> },
         { id: 'akademik', label: 'Rombel, Mapel & Jadwal', icon: <BookOpen className="w-4 h-4" /> },
         { id: 'keuangan', label: 'Keuangan & SPP', icon: <DollarSign className="w-4 h-4" /> },
@@ -91,6 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       menuItems = [
         { id: 'overview', label: 'Dashboard Akademik', icon: <LayoutDashboard className="w-4 h-4" /> },
         { id: 'siswa', label: 'Data Induk Siswa', icon: <GraduationCap className="w-4 h-4" /> },
+        { id: 'relasi-ortu', label: 'Penghubung Wali Murid', icon: <HeartHandshake className="w-4 h-4" /> },
         { id: 'guru', label: 'Data Tenaga Pendidik', icon: <Users className="w-4 h-4" /> },
         { id: 'kelas', label: 'Kelas & Rombel Belajar', icon: <Building className="w-4 h-4" /> },
         { id: 'mapel', label: 'Mata Pelajaran & KKM', icon: <BookOpen className="w-4 h-4" /> },

@@ -17,8 +17,10 @@ import {
   Lock,
   Unlock,
   CheckCircle2,
-  Download
+  Download,
+  HeartHandshake
 } from 'lucide-react';
+import { PenghubungOrtuSiswaView } from '../../components/dashboard/PenghubungOrtuSiswaView';
 
 interface AkademikDashboardProps {
   initialTab?: string;
@@ -33,6 +35,7 @@ export const AkademikDashboard: React.FC<AkademikDashboardProps> = ({ initialTab
     jadwal,
     nilai,
     prestasi,
+    relasiOrtuSiswa,
     saveSiswa,
     deleteSiswa,
     saveGuru,
@@ -171,6 +174,7 @@ export const AkademikDashboard: React.FC<AkademikDashboardProps> = ({ initialTab
       <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto text-xs font-semibold">
         {[
           { id: 'siswa', label: `Data Siswa (${siswa.length})`, icon: <GraduationCap className="w-4 h-4" /> },
+          { id: 'relasi_ortu', label: `Penghubung Wali & Siswa (${relasiOrtuSiswa.length})`, icon: <HeartHandshake className="w-4 h-4 text-rose-500" /> },
           { id: 'guru', label: `Data Guru (${guru.length})`, icon: <Users className="w-4 h-4" /> },
           { id: 'kelas', label: `Kelas & Rombel (${kelas.length})`, icon: <Building className="w-4 h-4" /> },
           { id: 'mapel', label: `Mata Pelajaran (${mapel.length})`, icon: <BookOpen className="w-4 h-4" /> },
@@ -276,6 +280,11 @@ export const AkademikDashboard: React.FC<AkademikDashboardProps> = ({ initialTab
             </table>
           </div>
         </div>
+      )}
+
+      {/* TAB: Penghubung Orang Tua & Siswa */}
+      {activeTab === 'relasi_ortu' && (
+        <PenghubungOrtuSiswaView />
       )}
 
       {/* TAB: Data Guru */}

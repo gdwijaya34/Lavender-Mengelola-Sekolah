@@ -15,7 +15,11 @@ import {
   ShieldCheck,
   CheckCircle2,
   Clock,
-  Download
+  Download,
+  HeartHandshake,
+  Phone,
+  Mail,
+  User
 } from 'lucide-react';
 import {
   BarChart,
@@ -36,11 +40,13 @@ export const SiswaDashboard: React.FC = () => {
     prestasi,
     tagihanSPP,
     pembayaranSPP,
-    config
+    config,
+    getOrtuBySiswaId
   } = useSchool();
 
   // Active student: Ahmad Fauzi
   const currentSiswa = siswa.find(s => s.nis === '20251101') || siswa[0];
+  const linkedParents = getOrtuBySiswaId(currentSiswa.siswa_id);
 
   const [activeTab, setActiveTab] = useState<'profil' | 'jadwal' | 'presensi' | 'nilai' | 'spp' | 'prestasi'>('nilai');
   const [selectedReceipt, setSelectedReceipt] = useState<PembayaranSPP | null>(null);
@@ -299,6 +305,123 @@ export const SiswaDashboard: React.FC = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: Biodata Diri & Orang Tua / Wali Terhubung */}
+      {activeTab === 'profil' && (
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-5">
+            <div>
+              <h3 className="font-bold text-slate-900 text-base">Biodata Peserta Didik</h3>
+              <p className="text-xs text-slate-500">Data administrasi resmi yang terdaftar pada pangkalan data sekolah.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+                <span className="font-bold text-slate-700 block text-[11px] uppercase tracking-wider text-slate-400">
+                  Identitas Akademik
+                </span>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500">Nama Lengkap:</span>
+                  <span className="font-bold text-slate-900">{currentSiswa.nama_lengkap}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500">NIS:</span>
+                  <span className="font-mono font-bold text-slate-900">{currentSiswa.nis}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500">NISN Nasional:</span>
+                  <span className="font-mono font-bold text-slate-900">{currentSiswa.nisn}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500">Jenis Kelamin:</span>
+                  <span className="font-semibold text-slate-800">{currentSiswa.jenis_kelamin === 'L' ? 'Laki-Laki' : 'Perempuan'}</span>
+                </div>
+                <div className="flex justify-between pb-0.5">
+                  <span className="text-slate-500">Rombel Kelas:</span>
+                  <span className="font-bold text-blue-700">{currentSiswa.kelas_id}</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+                <span className="font-bold text-slate-700 block text-[11px] uppercase tracking-wider text-slate-400">
+                  Data Kelahiran & Domisili
+                </span>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500">Tempat Lahir:</span>
+                  <span className="font-semibold text-slate-800">{currentSiswa.tempat_lahir}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500">Tanggal Lahir:</span>
+                  <span className="font-mono text-slate-800">{currentSiswa.tanggal_lahir}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                  <span className="text-slate-500">Tahun Ajaran:</span>
+                  <span className="font-semibold text-slate-800">{currentSiswa.tahun_ajaran}</span>
+                </div>
+                <div className="flex justify-between pb-0.5">
+                  <span className="text-slate-500">Alamat Tempat Tinggal:</span>
+                  <span className="text-slate-700 text-right max-w-[200px]">{currentSiswa.alamat}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Linked Parent / Guardian Card */}
+          <div className="bg-gradient-to-br from-indigo-50/70 to-rose-50/70 p-6 rounded-2xl border border-indigo-200/80 shadow-xs space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
+                  <HeartHandshake className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-sm">Wali Murid / Orang Tua Terhubung</h3>
+                  <p className="text-[11px] text-slate-500">Data wali yang memiliki hak pemantauan rapor & kuitansi SPP</p>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <span>Terhubung di Database</span>
+              </span>
+            </div>
+
+            {linkedParents.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                {linkedParents.map(ortu => (
+                  <div key={ortu.ortu_id} className="bg-white p-4 rounded-xl border border-indigo-100 shadow-2xs space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold text-slate-900 text-sm">{ortu.nama_lengkap}</div>
+                      <span className="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold text-[10px]">
+                        {ortu.hubungan}
+                      </span>
+                    </div>
+                    <div className="space-y-1 text-slate-600 text-[11px]">
+                      <div className="flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>{ortu.kontak}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Mail className="w-3.5 h-3.5 text-blue-600" />
+                        <span>{ortu.email}</span>
+                      </div>
+                      <div className="text-slate-500 text-[10px] pt-1 border-t border-slate-100">
+                        {ortu.alamat}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white p-4 rounded-xl border border-slate-200 text-xs text-slate-600 space-y-1">
+                <div className="font-bold text-slate-800">Nama Wali Tercatat: {currentSiswa.nama_ortu}</div>
+                <div>Kontak Darurat: {currentSiswa.kontak_ortu}</div>
+                <span className="text-[10px] text-amber-600 font-medium block mt-1">
+                  * Akun portal wali sedang dalam proses aktivasi oleh pihak sekolah.
+                </span>
+              </div>
+            )}
           </div>
         </div>
       )}

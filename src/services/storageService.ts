@@ -258,6 +258,50 @@ export const StorageService = {
     }
     setItem(STORAGE_KEYS.STAFF, list);
   },
+  deleteStaff(staffId: string) {
+    const list = this.getStaff().filter(s => s.staff_id !== staffId);
+    setItem(STORAGE_KEYS.STAFF, list);
+  },
+
+  // Orang Tua
+  getOrangTua(): OrangTua[] {
+    return getItem(STORAGE_KEYS.ORANG_TUA, INITIAL_ORANG_TUA);
+  },
+  saveOrangTua(ortu: OrangTua) {
+    const list = this.getOrangTua();
+    const idx = list.findIndex(o => o.ortu_id === ortu.ortu_id);
+    if (idx >= 0) {
+      list[idx] = ortu;
+    } else {
+      list.push(ortu);
+    }
+    setItem(STORAGE_KEYS.ORANG_TUA, list);
+  },
+  deleteOrangTua(ortuId: string) {
+    const list = this.getOrangTua().filter(o => o.ortu_id !== ortuId);
+    setItem(STORAGE_KEYS.ORANG_TUA, list);
+    const relasi = this.getRelasiOrtuSiswa().filter(r => r.ortu_id !== ortuId);
+    setItem(STORAGE_KEYS.RELASI_ORTU, relasi);
+  },
+
+  // Relasi Penghubung Orang Tua & Siswa
+  getRelasiOrtuSiswa(): RelasiOrtuSiswa[] {
+    return getItem(STORAGE_KEYS.RELASI_ORTU, INITIAL_RELASI_ORTU);
+  },
+  saveRelasiOrtuSiswa(relasi: RelasiOrtuSiswa) {
+    const list = this.getRelasiOrtuSiswa();
+    const idx = list.findIndex(r => r.id === relasi.id || (r.ortu_id === relasi.ortu_id && r.siswa_id === relasi.siswa_id));
+    if (idx >= 0) {
+      list[idx] = relasi;
+    } else {
+      list.push(relasi);
+    }
+    setItem(STORAGE_KEYS.RELASI_ORTU, list);
+  },
+  deleteRelasiOrtuSiswa(id: string) {
+    const list = this.getRelasiOrtuSiswa().filter(r => r.id !== id);
+    setItem(STORAGE_KEYS.RELASI_ORTU, list);
+  },
 
   // Kelas
   getKelas(): Kelas[] {
