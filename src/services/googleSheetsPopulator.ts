@@ -524,6 +524,27 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
+    // 5. Export All Data from Google Sheet to SIM Sekolah (Import Database Feature)
+    if (body.action === 'export_all' || body.action === 'get_all_data') {
+      var allData = {};
+      var sheets = ss.getSheets();
+      for (var s = 0; s < sheets.length; s++) {
+        var sh = sheets[s];
+        var sName = sh.getName();
+        var dRange = sh.getDataRange();
+        if (dRange && dRange.getNumRows() > 0) {
+          allData[sName] = dRange.getValues();
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        spreadsheetName: ss.getName(),
+        spreadsheetId: ss.getId(),
+        tables: allData,
+        exportedAt: new Date().toISOString()
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     return ContentService.createTextOutput(JSON.stringify({ success: true, message: "OK" })).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
@@ -534,7 +555,26 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  const ss = getTargetSpreadsheet();
+  var ss = getTargetSpreadsheet();
+  var action = (e && e.parameter && e.parameter.action) || 'status';
+  if (action === 'export_all' || action === 'get_all') {
+    var allData = {};
+    var sheets = ss.getSheets();
+    for (var s = 0; s < sheets.length; s++) {
+      var sh = sheets[s];
+      var sName = sh.getName();
+      var dRange = sh.getDataRange();
+      if (dRange && dRange.getNumRows() > 0) {
+        allData[sName] = dRange.getValues();
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      spreadsheetName: ss.getName(),
+      tables: allData,
+      time: new Date().toISOString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
   return ContentService.createTextOutput(JSON.stringify({
     status: "online",
     service: "SIM Sekolah Akademik Webhook Sync",
@@ -762,6 +802,27 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
+    // 5. Export All Data from Google Sheet to SIM Sekolah (Import Database Feature)
+    if (body.action === 'export_all' || body.action === 'get_all_data') {
+      var allData = {};
+      var sheets = ss.getSheets();
+      for (var s = 0; s < sheets.length; s++) {
+        var sh = sheets[s];
+        var sName = sh.getName();
+        var dRange = sh.getDataRange();
+        if (dRange && dRange.getNumRows() > 0) {
+          allData[sName] = dRange.getValues();
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        spreadsheetName: ss.getName(),
+        spreadsheetId: ss.getId(),
+        tables: allData,
+        exportedAt: new Date().toISOString()
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     return ContentService.createTextOutput(JSON.stringify({ success: true, message: "OK" })).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({
@@ -772,7 +833,26 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  const ss = getTargetSpreadsheet();
+  var ss = getTargetSpreadsheet();
+  var action = (e && e.parameter && e.parameter.action) || 'status';
+  if (action === 'export_all' || action === 'get_all') {
+    var allData = {};
+    var sheets = ss.getSheets();
+    for (var s = 0; s < sheets.length; s++) {
+      var sh = sheets[s];
+      var sName = sh.getName();
+      var dRange = sh.getDataRange();
+      if (dRange && dRange.getNumRows() > 0) {
+        allData[sName] = dRange.getValues();
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      spreadsheetName: ss.getName(),
+      tables: allData,
+      time: new Date().toISOString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
   return ContentService.createTextOutput(JSON.stringify({
     status: "online",
     service: "SIM Sekolah Keuangan Webhook Sync",

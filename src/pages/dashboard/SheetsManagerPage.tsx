@@ -500,6 +500,15 @@ export const SheetsManagerPage: React.FC = () => {
                 <span>Webhook Akademik Belum Dipasang</span>
               </span>
             )}
+
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('navigate-section', { detail: 'import-sheets' }))}
+              className="px-4 py-2 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <Download className="w-4 h-4" />
+              <span>Buka Menu Import Database</span>
+            </button>
           </div>
         </div>
 
